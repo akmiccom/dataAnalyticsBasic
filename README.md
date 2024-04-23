@@ -1,4 +1,4 @@
-# dataAnalyticsBasic データアナリティクスの基礎
+# データアナリティクスの基礎
 
 [TOC]
 
