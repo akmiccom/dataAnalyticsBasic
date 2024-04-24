@@ -152,7 +152,7 @@ $$ r_p = \sqrt{\frac{\chi^2}{\chi^2 + n}} $$
 - 右裾、左裾
 - 単峰性、多峰性
 
-![alt text](image.png)
+![alt text](img/image.png)
 
 #### 基本統計量
 
@@ -226,13 +226,13 @@ $$ \sigma^2 = \frac{1}{n-1} \sum_{i=1}^n (x_i - \bar{x})^2 \ , \ \sigma = \sqrt{
 - 最小値・第一四分位数・中央値・第三四分位数・最大値で示したもの
 - 分布の特徴を比較することができる
 
-![alt text](image-1.png)
+![alt text](img/image-1.png)
 
 ##### シグマの法則
 
 - 正規分布において
 
-![alt text](image-2.png)
+![alt text](img/image-2.png)
 
 - $\mu \pm 1 \sigma$ の区間にデータの $68.268$ %(2/3)が含まれる
     - 100万回に690,000回発生
@@ -338,6 +338,33 @@ $$
 B(n, \ p) \rightarrow E(X) = np \ , \ V(X) = npq
 $$
 
+- scipy を使った二項分布
+
+[scipy.stats.binom](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.binom.html#scipy.stats.binom)
+
+```python
+import numpy as np
+from scipy import stats  
+import matplotlib.pyplot as plt
+
+n, p = 10, 0.5
+attempt = np.arange(n+1)
+dist = stats.binom.pmf(attempt, n, p)
+print(dist)
+plt.figure(figsize=(5, 3))
+plt.bar(attempt, dist)
+plt.xlabel('number of successes')
+plt.ylabel('probability')
+plt.show()
+```
+
+- 成功回数の確率分布
+
+    [0.00097656 0.00976563 0.04394531 0.1171875  0.20507812 0.24609375
+     0.20507812 0.1171875  0.04394531 0.00976563 0.00097656]
+    
+![png](img/scipy_stats_2_1.png)
+
 #### 正規分布を用いた分析
 - 確率密度関数
 $$ P(a \leq X \leq b) = \int_a^b f(x) dx $$ 
@@ -358,6 +385,59 @@ $$
 $$
 aX_1 + bX_2 \sim N(a\mu_1+ b\mu_2, \ a^2\sigma_1^2 + b^2\sigma_2^2)
 $$
+
+- scipy を使った正規分布
+
+```python
+import numpy as np
+from scipy import stats
+import matplotlib.pyplot as plt
+import japanize_matplotlib
+
+# 標準正規分布のモーメント
+mean, var, skew, kurt = stats.norm.stats(moments='mvsk')
+print(f'mean: {mean}', f'var: {var}', f'skew: {skew:.04f}', f'kurt: {kurt:.04f}')
+```
+
+    mean: 0.0 var: 1.0 skew: 0.0000 kurt: 0.0000
+    
+
+- 標準正規分布
+
+```python
+x = np.linspace(stats.norm.ppf(0.001), stats.norm.ppf(0.999), 100)
+dist = stats.norm.pdf(x)
+plt.figure(figsize=(5, 3))
+plt.plot(x, dist, label='Std norm pdf')
+plt.xlabel('x')
+plt.ylabel('Probability dencity')
+plt.title(f'標準正規分布')
+plt.legend()
+plt.show()
+```
+    
+![png](img/scipy_stats_norm_5_0.png)
+    
+
+- 平均=10, 分散= 5^2 の正規分布
+
+
+```python
+mu, std = 10, 5
+x = np.linspace(mu-mu*2, mu+mu*2, 100)
+dist = stats.norm.pdf(x, mu, std)
+plt.figure(figsize=(5, 3))
+plt.plot(x, dist, label='norm pdf')
+plt.xlabel('x')
+plt.ylabel('Probability dencity')
+plt.title(f'平均={mu}, 分散{std**2} の正規分布')
+plt.legend()
+plt.show()
+```
+
+    
+![png](img/scipy_stats_norm_7_0.png)
+    
 
 #### いろいろな確率分布を用いた分析
 ##### $\chi^ 2$ 分布
@@ -450,23 +530,36 @@ $$
     - 対応のあるデータ: データの差による検定
 
 ## 時系列・テキスト・乱数データのアナリティクス
+
 ### 時系列データの分析
+
 #### 指数・増減率・成長率
+
+指数は比較する値の比、増減率・成長率は、増減分の値と元の値の比で表す
+
 ##### 指数
+
 $$ t時点での指数 = \frac{t時点の値}{基準時点の値} \times 100 $$
+
 ##### 増減率
+
 $$ t時点での増加率 = \frac{t時点の値 - 基準時点の値}{基準時点の値} \times 100 $$
-##### 成長率
-$$ t時点での成長率 = \frac{t時点の値 - t-1時点の値}{t-1時点の値} $$
+
+##### 成長率(増減率と同じ考え)
+
+$$ t時点での成長率 = \frac{t時点の値 - (t-1)時点の値}{t-1時点の値} $$
 
 #### 移動平均・季節調整・寄与度分解
+
 ##### 時系列データの4つの変動成分
+
 - 傾向変動: 上昇や下降などの単調な動き
 - 循環変動: 周期が定まっていない循環的な動き
 - 季節変動: 一年を周期とした動き
 - 不規則変動: 上記以外の突発的な動き
 
 ##### 移動平均
+
 - 中央移動平均
 - 後方移動平均
 - 前方移動平均
